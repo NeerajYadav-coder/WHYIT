@@ -1,0 +1,202 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── User ────────────────────────────────────────────────────────
+// Minimal user model. Auth fields will be added when auth lands.
+// All user data is scoped through Workspace for clean multi-tenancy.
+model User {
+  id         String      @id @default(cuid())
+  email      String      @unique
+  name       String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  workspaces Workspace[]
+}
+
+// ── Workspace ───────────────────────────────────────────────────
+// A user can have multiple workspaces (e.g. "Personal", "Work").
+// Currently a single default workspace is created per user.
+model Workspace {
+  id        String    @id @default(cuid())
+  name      String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+// ── Project ─────────────────────────────────────────────────────
+// A learning project. Contains conversations & knowledge sources.
+model Project {
+  id               String            @id @default(cuid())
+  name             String
+  goal             String            @db.Text
+  motivation       String            @db.Text
+  context          String?           @db.Text
+  workspaceId      String
+  workspace        Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  conversations    Conversation[]
+  knowledgeSources KnowledgeSource[]
+  curiosities      Curiosity[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  @@index([workspaceId])
+}
+
+// ── Conversation ────────────────────────────────────────────────
+// One conversation per project (for now). Designed to support
+// multiple conversations per project in the future.
+model Conversation {
+  id        String    @id @default(cuid())
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([projectId])
+}
+
+// ── Message ─────────────────────────────────────────────────────
+// Immutable once stored. Assistant messages are only saved after
+// streaming completes successfully — no partial messages in the DB.
+model Message {
+  id             String        @id @default(cuid())
+  conversationId String
+  conversation   Conversation  @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String        @db.Text
+  status         MessageStatus @default(COMPLETE)
+  tokenCount     Int?
+  // Reserved for future: model name, tool calls, memory refs, etc.
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([conversationId])
+  @@index([conversationId, createdAt])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+enum MessageStatus {
+  COMPLETE
+  FAILED
+  // STREAMING is never persisted — it's a transient UI state only
+}
+
+// ── Knowledge Source & Chunk Models (Sprint 5) ───────────────────
+
+enum ResourceType {
+  PDF
+  MARKDOWN
+  TEXT
+  URL
+  YOUTUBE
+  BOOK
+  AUDIO
+  VIDEO
+  RESEARCH_PAPER
+  GITHUB_REPO
+  DOCUMENTATION_SITE
+}
+
+enum ProcessingStatus {
+  QUEUED
+  EXTRACTING
+  NORMALIZING
+  CHUNKING
+  COMPLETED
+  FAILED
+}
+
+model KnowledgeSource {
+  id             String           @id @default(cuid())
+  projectId      String
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title          String
+  type           ResourceType
+  status         ProcessingStatus @default(QUEUED)
+  sourceUrl      String?          @db.Text
+  filePath       String?          @db.Text
+  rawContent     String?          @db.Text
+  normalizedText String?          @db.Text
+  metadata       Json?
+  wordCount      Int              @default(0)
+  tokenEstimate  Int              @default(0)
+  chunks         KnowledgeChunk[]
+  processingJobs ProcessingJob[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+}
+
+model KnowledgeChunk {
+  id            String          @id @default(cuid())
+  sourceId      String
+  source        KnowledgeSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  position      Int
+  sectionTitle  String?
+  content       String          @db.Text
+  tokenEstimate Int             @default(0)
+  metadata      Json?
+  createdAt     DateTime        @default(now())
+
+  @@index([sourceId])
+  @@index([sourceId, position])
+}
+
+model ProcessingJob {
+  id          String           @id @default(cuid())
+  sourceId    String
+  source      KnowledgeSource  @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  stage       ProcessingStatus
+  error       String?          @db.Text
+  retryCount  Int              @default(0)
+  startedAt   DateTime         @default(now())
+  completedAt DateTime?
+
+  @@index([sourceId])
+}
+
+// ── Curiosity ───────────────────────────────────────────────────
+// Side-thread deep exploration branches attached to a project.
+// Stored persistently in DB so student side inquiries are never lost.
+model Curiosity {
+  id                 String   @id @default(cuid())
+  projectId          String
+  project            Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parentChatId       String?
+  parentMessageId    String?
+  selectedText       String   @db.Text
+  surroundingContext String?  @db.Text
+  sectionHeading     String?
+  projectName        String?
+  title              String
+  pinned             Boolean  @default(false)
+  archived           Boolean  @default(false)
+  messages           Json     @default("[]")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([projectId, createdAt])
+}

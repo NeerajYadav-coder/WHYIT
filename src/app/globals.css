@@ -1,0 +1,726 @@
+@import "tailwindcss";
+
+/* ================================================================
+   WHYIT DESIGN SYSTEM — Apple Design Philosophy Implementation
+   ================================================================
+   Source of truth for ALL visual values.
+   No literal hex/px values in components — always reference tokens.
+   Accent: #6E6CF7 (distinctive indigo — not Apple system blue).
+   ================================================================ */
+
+/* ── 1. DARK MODE BASE (default) ─────────────────────────────── */
+:root {
+  color-scheme: dark;
+
+  /* Semantic color tokens — Velvet Obsidian Foundation */
+  --color-label-primary:        #F3F4F6;
+  --color-label-secondary:      rgba(243, 244, 246, 0.65);
+  --color-label-tertiary:       rgba(243, 244, 246, 0.40);
+  --color-system-background:    #090A0D;
+  --color-secondary-background: #111217;
+  --color-tertiary-background:  #17181F;
+  --color-surface-4:            #22242D;
+
+  /* Accent — Atmospheric Indigo Iris */
+  --color-accent-primary:       #6366F1;
+  --color-accent-primary-rgb:   99, 102, 241;
+  --color-accent-hover:         #797BFF;
+  --color-accent-dim:           rgba(99, 102, 241, 0.12);
+  --color-accent-foreground:    #FFFFFF;
+  --color-accent-glow:          0 0 28px rgba(99, 102, 241, 0.25);
+
+  /* System semantic & craft colors */
+  --color-system-green:         #10B981; /* Emerald */
+  --color-system-red:           #EF4444;
+  --color-system-amber:         #F59E0B; /* Amber Quill */
+  --color-system-orange:        #F97316;
+  --color-system-blue:          #3B82F6;
+
+  /* Structural & Specular Hairlines */
+  --color-separator:            rgba(255, 255, 255, 0.08);
+  --color-separator-subtle:     rgba(255, 255, 255, 0.04);
+  --color-separator-opaque:     #1D1F28;
+  --color-memory-highlight:     rgba(99, 102, 241, 0.09);
+
+  /* Translucent surfaces */
+  --color-bg-glass:             rgba(17, 18, 23, 0.78);
+  --color-bg-glass-rgb:         17, 18, 23;
+
+  /* Focus */
+  --color-focus-ring:           var(--color-accent-primary);
+}
+
+/* ── 2. LIGHT MODE ───────────────────────────────────────────── */
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --color-label-primary:        #1D1D1F;
+    --color-label-secondary:      rgba(29,29,31,0.55);
+    --color-label-tertiary:       rgba(29,29,31,0.30);
+    --color-system-background:    #FFFFFF;
+    --color-secondary-background: #F5F5F7;
+    --color-tertiary-background:  #EBEBED;
+    --color-surface-4:            #D9D9DC;
+    --color-accent-primary:       #5B59D9;
+    --color-accent-primary-rgb:   91,89,217;
+    --color-accent-dim:           rgba(91,89,217,0.12);
+    --color-separator:            rgba(60,60,67,0.29);
+    --color-separator-opaque:     #C6C6C8;
+    --color-memory-highlight:     rgba(91,89,217,0.06);
+    --color-bg-glass:             rgba(255,255,255,0.72);
+    --color-bg-glass-rgb:         255,255,255;
+  }
+}
+
+/* Manual override classes */
+.dark  { color-scheme: dark; }
+.light { color-scheme: light;
+  --color-label-primary:        #1D1D1F;
+  --color-label-secondary:      rgba(29,29,31,0.55);
+  --color-label-tertiary:       rgba(29,29,31,0.30);
+  --color-system-background:    #FFFFFF;
+  --color-secondary-background: #F5F5F7;
+  --color-tertiary-background:  #EBEBED;
+  --color-accent-primary:       #5B59D9;
+  --color-separator:            rgba(60,60,67,0.29);
+  --color-separator-opaque:     #C6C6C8;
+  --color-memory-highlight:     rgba(91,89,217,0.06);
+  --color-bg-glass:             rgba(255,255,255,0.72);
+}
+
+/* ── 3. TYPOGRAPHY — Apple Dynamic Type Scale ─────────────────── */
+:root {
+  /* Font stacks */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter",
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: "Charter", "New York", "Georgia", "Cambria", "Times New Roman", serif;
+  --font-mono: "SF Mono", "Fira Code", "Cascadia Code", ui-monospace, monospace;
+
+  /* Type scale sizes (pt → px, 1pt = 1px) */
+  --type-large-title-size:    2.125rem;  /* 34pt */
+  --type-title-1-size:        1.75rem;   /* 28pt */
+  --type-title-2-size:        1.375rem;  /* 22pt */
+  --type-title-3-size:        1.25rem;   /* 20pt */
+  --type-headline-size:       1.0625rem; /* 17pt */
+  --type-body-size:           1.0625rem; /* 17pt */
+  --type-callout-size:        1rem;      /* 16pt */
+  --type-subheadline-size:    0.9375rem; /* 15pt */
+  --type-footnote-size:       0.8125rem; /* 13pt */
+  --type-caption-1-size:      0.75rem;   /* 12pt */
+  --type-caption-2-size:      0.6875rem; /* 11pt */
+
+  /* Line heights (pt) */
+  --type-large-title-lh:   2.5625rem;  /* 41pt */
+  --type-title-1-lh:       2.125rem;   /* 34pt */
+  --type-title-2-lh:       1.75rem;    /* 28pt */
+  --type-title-3-lh:       1.5625rem;  /* 25pt */
+  --type-headline-lh:      1.375rem;   /* 22pt */
+  --type-body-lh:          1.375rem;   /* 22pt */
+  --type-callout-lh:       1.3125rem;  /* 21pt */
+  --type-subheadline-lh:   1.25rem;    /* 20pt */
+  --type-footnote-lh:      1.125rem;   /* 18pt */
+  --type-caption-1-lh:     1rem;       /* 16pt */
+  --type-caption-2-lh:     0.8125rem;  /* 13pt */
+
+  /* Letter spacing */
+  --type-large-title-ls:   -0.4px;
+  --type-title-1-ls:       -0.4px;
+  --type-title-2-ls:       -0.3px;
+  --type-title-3-ls:       -0.2px;
+  --type-headline-ls:      -0.43px;
+  --type-body-ls:          -0.43px;
+  --type-callout-ls:       -0.31px;
+  --type-subheadline-ls:   -0.23px;
+  --type-footnote-ls:      -0.08px;
+  --type-caption-1-ls:     0px;
+  --type-caption-2-ls:     0.06px;
+
+  /* Reading Mode */
+  --reading-mode-max-width: 680px;
+  --reading-mode-line-height: 1.7;
+}
+
+/* ── 4. SPACING — strict 8pt grid ────────────────────────────── */
+:root {
+  --space-1:  4px;   /* micro only */
+  --space-2:  8px;
+  --space-3:  12px;  /* 1.5 × base, used sparingly */
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* Corner radii */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-pill: 9999px;
+
+  /* Tap target minimum */
+  --tap-target:  44px;
+
+  /* Layout */
+  --conversation-max-width: 860px;
+  --sidebar-left-width:     240px;
+  --sidebar-right-width:    280px;
+}
+
+/* ── 5. MOTION — spec §5 curves and durations ─────────────────── */
+:root {
+  --ease-standard:  cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-enter:     cubic-bezier(0.32, 0.72, 0, 1);   /* spring-like enter */
+  --ease-exit:      cubic-bezier(0.4, 0, 1, 1);
+  --ease-bounce:    cubic-bezier(0.32, 0.72, 0, 1);
+
+  --duration-micro:  160ms;   /* button press, checkbox */
+  --duration-short:  250ms;   /* sheet, panel, tab */
+  --duration-medium: 350ms;   /* screen-level, Reading Mode */
+  --duration-long:   420ms;   /* project switch */
+}
+
+/* ── 6. TAILWIND v4 THEME EXTENSION ──────────────────────────── */
+@theme inline {
+  /* Colors */
+  --color-label-primary:        var(--color-label-primary);
+  --color-label-secondary:      var(--color-label-secondary);
+  --color-label-tertiary:       var(--color-label-tertiary);
+  --color-system-background:    var(--color-system-background);
+  --color-secondary-background: var(--color-secondary-background);
+  --color-tertiary-background:  var(--color-tertiary-background);
+  --color-surface-4:            var(--color-surface-4);
+  --color-accent-primary:       var(--color-accent-primary);
+  --color-accent-dim:           var(--color-accent-dim);
+  --color-accent-foreground:    var(--color-accent-foreground);
+  --color-system-green:         var(--color-system-green);
+  --color-system-red:           var(--color-system-red);
+  --color-system-orange:        var(--color-system-orange);
+  --color-separator:            var(--color-separator);
+  --color-separator-opaque:     var(--color-separator-opaque);
+  --color-memory-highlight:     var(--color-memory-highlight);
+  --color-bg-glass:             var(--color-bg-glass);
+
+  /* Typography */
+  --font-sans:  var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono:  var(--font-mono);
+
+  /* Type scale → Tailwind text-* utilities */
+  --text-large-title:    var(--type-large-title-size);
+  --text-title-1:        var(--type-title-1-size);
+  --text-title-2:        var(--type-title-2-size);
+  --text-title-3:        var(--type-title-3-size);
+  --text-headline:       var(--type-headline-size);
+  --text-body:           var(--type-body-size);
+  --text-callout:        var(--type-callout-size);
+  --text-subheadline:    var(--type-subheadline-size);
+  --text-footnote:       var(--type-footnote-size);
+  --text-caption-1:      var(--type-caption-1-size);
+  --text-caption-2:      var(--type-caption-2-size);
+}
+
+/* ── 7. BASE RESET ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  height: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+body {
+  height: 100%;
+  background-color: var(--color-system-background);
+  color: var(--color-label-primary);
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  margin: 0;
+}
+
+/* ── 8. FOCUS ────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── 9. SCROLLBAR ────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-separator-opaque); border-radius: var(--radius-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-surface-4); }
+
+/* ── 10. SELECTION ───────────────────────────────────────────── */
+::selection {
+  background: var(--color-accent-dim);
+  color: var(--color-label-primary);
+}
+
+/* ── 11. TRANSLUCENT GLASS SURFACE ───────────────────────────── */
+.glass {
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ── 12. TYPOGRAPHY UTILITY CLASSES ─────────────────────────── */
+.type-large-title {
+  font-size: var(--type-large-title-size);
+  line-height: var(--type-large-title-lh);
+  letter-spacing: var(--type-large-title-ls);
+  font-weight: 700;
+}
+.type-title-1 {
+  font-size: var(--type-title-1-size);
+  line-height: var(--type-title-1-lh);
+  letter-spacing: var(--type-title-1-ls);
+  font-weight: 400;
+}
+.type-title-2 {
+  font-size: var(--type-title-2-size);
+  line-height: var(--type-title-2-lh);
+  letter-spacing: var(--type-title-2-ls);
+  font-weight: 400;
+}
+.type-title-3 {
+  font-size: var(--type-title-3-size);
+  line-height: var(--type-title-3-lh);
+  letter-spacing: var(--type-title-3-ls);
+  font-weight: 400;
+}
+.type-headline {
+  font-size: var(--type-headline-size);
+  line-height: var(--type-headline-lh);
+  letter-spacing: var(--type-headline-ls);
+  font-weight: 600;
+}
+.type-body {
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  letter-spacing: var(--type-body-ls);
+  font-weight: 400;
+}
+.type-callout {
+  font-size: var(--type-callout-size);
+  line-height: var(--type-callout-lh);
+  letter-spacing: var(--type-callout-ls);
+  font-weight: 400;
+}
+.type-subheadline {
+  font-size: var(--type-subheadline-size);
+  line-height: var(--type-subheadline-lh);
+  letter-spacing: var(--type-subheadline-ls);
+  font-weight: 400;
+}
+.type-footnote {
+  font-size: var(--type-footnote-size);
+  line-height: var(--type-footnote-lh);
+  letter-spacing: var(--type-footnote-ls);
+  font-weight: 400;
+}
+.type-caption-1 {
+  font-size: var(--type-caption-1-size);
+  line-height: var(--type-caption-1-lh);
+  letter-spacing: var(--type-caption-1-ls);
+  font-weight: 400;
+}
+.type-caption-2 {
+  font-size: var(--type-caption-2-size);
+  line-height: var(--type-caption-2-lh);
+  letter-spacing: var(--type-caption-2-ls);
+  font-weight: 400;
+}
+
+/* ── 13. READING MODE ────────────────────────────────────────── */
+.reading-mode {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;          /* 18pt — slightly above body */
+  line-height: var(--reading-mode-line-height);
+  max-width: var(--reading-mode-max-width);
+  font-weight: 400;
+  letter-spacing: 0px;
+}
+.reading-mode strong { font-weight: 600; }
+
+/* ── 14. ANIMATIONS ──────────────────────────────────────────── */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleSettle {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes thinkingPulse {
+  0%, 100% { opacity: 0.35; }
+  50%       { opacity: 1; }
+}
+@keyframes blinkCursor {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.animate-fade-up {
+  animation: fadeSlideUp var(--duration-short) var(--ease-enter) both;
+}
+.animate-scale-settle {
+  animation: scaleSettle var(--duration-medium) var(--ease-bounce) both;
+}
+.animate-thinking {
+  animation: thinkingPulse 1.6s ease-in-out infinite;
+}
+@keyframes breathingGaze {
+  0%, 100% { opacity: 0.35; transform: scale(0.98); }
+  50% { opacity: 0.95; transform: scale(1.02); }
+}
+.animate-breathing {
+  animation: breathingGaze 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.notebook-gutter {
+  position: relative;
+  border-left: 2px solid var(--color-accent-dim);
+  padding-left: var(--space-4);
+}
+.streaming-cursor::after {
+  content: "▋";
+  color: var(--color-accent-primary);
+  animation: blinkCursor 1s step-end infinite;
+  margin-left: 1px;
+  font-size: 0.9em;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-scale-settle { animation: none; opacity: 1; transform: none; }
+  .animate-thinking { animation: none; opacity: 0.7; }
+  .streaming-cursor::after { animation: none; }
+}
+
+/* ── 15. SHADOWS ─────────────────────────────────────────────── */
+:root {
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --shadow-md:  0 6px 20px -2px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.07);
+  --shadow-lg:  0 14px 36px -4px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.09);
+  --shadow-popup: 0 24px 64px -8px rgba(0, 0, 0, 0.75), 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.11);
+  --shadow-dock: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.09);
+}
+
+.specular-border {
+  border: 1px solid var(--color-separator);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.glow-iris {
+  box-shadow: 0 0 24px -2px rgba(99, 102, 241, 0.28);
+}
+
+/* ── APPLE VIBRANCY & SPATIAL UTILITIES ─────────────────────── */
+.apple-gradient-text {
+  background: linear-gradient(180deg, #FFFFFF 15%, rgba(255, 255, 255, 0.65) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.apple-gradient-subtle {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.apple-glass-card {
+  background: rgba(17, 18, 23, 0.6);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.apple-bento-card {
+  background: rgba(17, 18, 23, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 12px 36px -8px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 16px 48px -4px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.apple-spotlight-dock {
+  background: rgba(17, 18, 24, 0.85);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.apple-spotlight-dock input,
+.apple-spotlight-dock input:focus,
+.apple-spotlight-dock input:focus-visible,
+.apple-spotlight-dock textarea,
+.apple-spotlight-dock textarea:focus,
+.apple-spotlight-dock textarea:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.radial-ambient-hero {
+  background: radial-gradient(circle at 50% -10%, rgba(99, 102, 241, 0.18) 0%, rgba(99, 102, 241, 0.03) 45%, transparent 70%);
+}
+
+/* Tactile interactive spring transition */
+.apple-press-spring {
+  transition: transform 160ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 160ms ease, border-color 160ms ease;
+}
+.apple-press-spring:hover {
+  transform: translateY(-2px);
+}
+.apple-press-spring:active {
+  transform: scale(0.98);
+}
+
+/* Subtle card sheen micro-animation */
+.apple-sheen-card {
+  position: relative;
+  overflow: hidden;
+}
+.apple-sheen-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  transition: left 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.apple-sheen-card:hover::before {
+  left: 100%;
+}
+
+/* ── 16. VISUALLY HIDDEN ─────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── 17. CURIOSITY MODE ───────────────────────────────────────── */
+
+/* Selection bubble — floats above highlighted text */
+.curiosity-bubble-enter {
+  animation: curiosityBubbleIn var(--duration-short) var(--ease-enter) both;
+}
+@keyframes curiosityBubbleIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(4px) scale(0.92); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0)   scale(1); }
+}
+
+/* The Explore button inside the bubble */
+.curiosity-explore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-primary);
+  color: var(--color-accent-foreground);
+  font-family: var(--font-sans);
+  font-size: var(--type-caption-1-size);
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(var(--color-accent-primary-rgb), 0.45),
+              0 1px 4px  rgba(0,0,0,0.25);
+  transition: transform var(--duration-micro) var(--ease-standard),
+              box-shadow var(--duration-micro) var(--ease-standard),
+              opacity var(--duration-micro) var(--ease-standard);
+  white-space: nowrap;
+  user-select: none;
+}
+.curiosity-explore-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 20px rgba(var(--color-accent-primary-rgb), 0.55),
+              0 2px 6px  rgba(0,0,0,0.30);
+}
+.curiosity-explore-btn:active {
+  transform: scale(0.97);
+}
+
+/* Arrow below the bubble pointing to the selection */
+.curiosity-bubble-arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid var(--color-accent-primary);
+  margin: 0 auto;
+  margin-top: 2px;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.25));
+}
+
+/* ── Curiosity Popup ─────────────────────────────────────────── */
+.curiosity-popup {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-separator);
+  background: var(--color-secondary-background);
+  box-shadow: var(--shadow-popup);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  animation: curiosityPopupIn var(--duration-medium) var(--ease-enter) both;
+  overflow: hidden;
+}
+@keyframes curiosityPopupIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Popup header — drag handle */
+.curiosity-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 10px 14px;
+  border-bottom: 1px solid var(--color-separator);
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  flex-shrink: 0;
+  gap: 8px;
+  user-select: none;
+}
+.curiosity-popup-header:active {
+  cursor: grabbing;
+}
+
+/* Context pill (provenance breadcrumb) */
+.curiosity-context-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--color-separator);
+  font-size: var(--type-caption-2-size);
+  color: var(--color-label-tertiary);
+  background: var(--color-tertiary-background);
+  flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Messages scroll area */
+.curiosity-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+/* Input area */
+.curiosity-input-area {
+  padding: 10px 12px 10px;
+  border-top: 1px solid var(--color-separator);
+  flex-shrink: 0;
+  background: var(--color-bg-glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Small avatar dot for AI messages in curiosity popup */
+.curiosity-icon-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent-dim);
+  border: 1px solid var(--color-separator);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.curiosity-icon-dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-primary);
+}
+
+/* Minimized pill */
+.curiosity-popup-minimized {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-primary);
+  color: var(--color-accent-foreground);
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  animation: curiosityBubbleIn var(--duration-short) var(--ease-enter) both;
+  user-select: none;
+  transition: transform var(--duration-micro) var(--ease-standard),
+              box-shadow var(--duration-micro) var(--ease-standard);
+}
+.curiosity-popup-minimized:hover {
+  transform: scale(1.03);
+  box-shadow: var(--shadow-lg);
+}
+.curiosity-popup-minimized:active { transform: scale(0.97); }
+
+/* Badge on sidebar tab icons */
+.curiosity-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 14px;
+  height: 14px;
+  padding: 0 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-primary);
+  color: var(--color-accent-foreground);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 14px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-secondary-background);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .curiosity-bubble-enter,
+  .curiosity-popup { animation: none; opacity: 1; transform: none; }
+  .curiosity-popup-minimized { animation: none; }
+}
