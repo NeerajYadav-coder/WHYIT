@@ -112,7 +112,7 @@ export const conversationService = {
 
     // 1. Use the central PromptService to assemble context, enforce token budgeting, and construct the final messages payload.
     const promptService = new PromptService();
-    const { messages: aiMessages, metrics } = await promptService.preparePrompt({
+    const { messages: aiMessages, metrics, hasMemory } = await promptService.preparePrompt({
       projectId,
       conversationId,
       userMessage,
@@ -138,10 +138,11 @@ export const conversationService = {
         conversationId,
         role: "ASSISTANT",
         content: fullContent,
+        metadata: hasMemory ? { usesMemory: true } : undefined,
       });
     }
 
-    return { stream, onComplete, metrics };
+    return { stream, onComplete, metrics, hasMemory };
   },
 
   /**

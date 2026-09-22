@@ -34,7 +34,7 @@ export class PromptService {
       selectedText: string;
       messages: { role: "user" | "assistant"; content: string }[];
     }[];
-  }): Promise<{ messages: ChatMessage[]; metrics: TokenMetrics }> {
+  }): Promise<{ messages: ChatMessage[]; metrics: TokenMetrics; hasMemory?: boolean }> {
     const { projectId, conversationId, userMessage, curiosities } = opts;
 
     // 1. Get pruned context and token metrics
@@ -48,9 +48,14 @@ export class PromptService {
     // 2. Build the final formatted payload
     const messages = this.builder.build(context, userMessage);
 
+    const hasMemory = Boolean(
+      context.memory?.axioms && context.memory.axioms.length > 0
+    );
+
     return {
       messages,
       metrics,
+      hasMemory,
     };
   }
 }

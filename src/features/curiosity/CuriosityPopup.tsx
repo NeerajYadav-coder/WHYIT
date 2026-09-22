@@ -32,6 +32,8 @@ import {
   ArrowUpIcon,
   SparklesIcon,
   ChevronRightIcon,
+  BookmarkIcon,
+  CheckIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Textarea } from "@/components/ui/Textarea";
@@ -441,7 +443,12 @@ function CuriosityPopup({
       {/* ── Message list ─────────────────────────────────────── */}
       <div className="curiosity-messages">
         {messages.map((msg) => (
-          <CuriosityMessageBubble key={msg.id} message={msg} />
+          <CuriosityMessageBubble
+            key={msg.id}
+            message={msg}
+            projectId={conversation.parentChatId}
+            curiosityTitle={conversation.title}
+          />
         ))}
 
         {isThinking && (
@@ -502,38 +509,134 @@ function CuriosityPopup({
 }
 
 // ── Tiny message renderer for the popup ──────────────────────
-function CuriosityMessageBubble({ message }: { message: SideMessage }) {
+function CuriosityMessageBubble({
+  message,
+  projectId,
+  curiosityTitle,
+}: {
+  message: SideMessage;
+  projectId?: string;
+  curiosityTitle?: string;
+}) {
   const isUser = message.role === "user";
+  const [savedAxiom, setSavedAxiom] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveAsAxiom = async () => {
+    if (!projectId || isSaving || savedAxiom) return;
+    setIsSaving(true);
+    try {
+      let statement = message.content.replace(/#+\s*/g, "").replace(/\*\*/g, "").trim();
+      let formula: string | undefined;
+
+      const mathMatch = message.content.match(/\$\$([\s\S]*?)\$\$/);
+      if (mathMatch) {
+        formula = mathMatch[1].trim();
+      } else {
+        const inlineMatch = message.content.match(/\$([^$\n]+)\$/);
+        if (inlineMatch) formula = inlineMatch[1].trim();
+      }
+
+      const firstSentence = statement.split(/[.\n]/).filter((s) => s.trim().length > 10)[0]?.trim();
+      if (firstSentence) {
+        statement = firstSentence;
+      }
+      if (statement.length > 240) {
+        statement = statement.slice(0, 240) + "...";
+      }
+
+      const res = await fetch("/api/axioms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          projectId,
+          statement: statement || "Key principle derived from curiosity exploration",
+          formula: formula || null,
+          category: formula ? "Mathematical Theorem" : "Core Principle",
+          status: "DISCOVERED",
+          evidence: curiosityTitle ? `Derived from curiosity thread: "${curiosityTitle}"` : "Derived from side exploration",
+        }),
+      });
+
+      if (res.ok) {
+        setSavedAxiom(true);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("whyit:axioms_updated"));
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save curiosity conclusion as axiom:", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div
       className={cn(
-        "flex w-full animate-fade-up",
-        isUser ? "justify-end" : "justify-start",
-        "gap-[var(--space-2)]"
+        "flex w-full animate-fade-up flex-col",
+        isUser ? "items-end" : "items-start",
+        "gap-[var(--space-1)]"
       )}
     >
-      {!isUser && (
-        <div className="curiosity-icon-dot mt-[3px] flex-shrink-0" aria-hidden="true" />
-      )}
       <div
         className={cn(
-          isUser
-            ? [
-                "max-w-[80%] px-[var(--space-3)] py-[var(--space-2)]",
-                "rounded-[var(--radius-md)] rounded-br-[var(--radius-sm)]",
-                "bg-[var(--color-tertiary-background)]",
-              ]
-            : ["max-w-[90%]"],
-          "type-footnote"
+          "flex w-full",
+          isUser ? "justify-end" : "justify-start",
+          "gap-[var(--space-2)]"
         )}
-        style={{ color: "var(--color-label-primary)" }}
       >
+        {!isUser && (
+          <div className="curiosity-icon-dot mt-[3px] flex-shrink-0" aria-hidden="true" />
+        )}
         <div
-          className={cn(message.isStreaming && "streaming-cursor")}
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
-        />
+          className={cn(
+            isUser
+              ? [
+                  "max-w-[80%] px-[var(--space-3)] py-[var(--space-2)]",
+                  "rounded-[var(--radius-md)] rounded-br-[var(--radius-sm)]",
+                  "bg-[var(--color-tertiary-background)]",
+                ]
+              : ["max-w-[90%]"],
+            "type-footnote"
+          )}
+          style={{ color: "var(--color-label-primary)" }}
+        >
+          <div
+            className={cn(message.isStreaming && "streaming-cursor")}
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
+          />
+        </div>
       </div>
+
+      {!isUser && !message.isStreaming && message.content.length > 20 && projectId && (
+        <div className="ml-5 mt-0.5 flex items-center">
+          <button
+            type="button"
+            onClick={handleSaveAsAxiom}
+            disabled={isSaving || savedAxiom}
+            className={cn(
+              "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border transition-all duration-200 cursor-pointer",
+              savedAxiom
+                ? "bg-[rgba(52,199,89,0.12)] border-[rgba(52,199,89,0.3)] text-[var(--color-system-green)]"
+                : "bg-[var(--color-secondary-background)] border-[var(--color-separator)] text-[var(--color-label-secondary)] hover:text-[var(--color-label-primary)] hover:border-[var(--color-accent-primary)] hover:bg-[var(--color-tertiary-background)]"
+            )}
+            title="Promote this conclusion to a permanent Project Learning Axiom"
+          >
+            {savedAxiom ? (
+              <>
+                <CheckIcon className="h-3 w-3 text-[var(--color-system-green)]" />
+                <span>Saved to Axioms</span>
+              </>
+            ) : (
+              <>
+                <BookmarkIcon className="h-3 w-3" />
+                <span>{isSaving ? "Saving…" : "Save as Axiom"}</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -53,6 +53,11 @@ export class ContextService {
         }
       }
     }
+    if (context.memory?.axioms) {
+      for (const ax of context.memory.axioms) {
+        staticTokens += Math.ceil((ax.statement.length + (ax.formula?.length ?? 0)) / 4) + 10;
+      }
+    }
 
     // System prompt template overhead estimate (~180 tokens)
     staticTokens += 180;

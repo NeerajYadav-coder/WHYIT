@@ -41,7 +41,8 @@ function getPrisma(): PrismaClient {
   if (
     !globalForPrisma.prisma ||
     !("knowledgeSource" in globalForPrisma.prisma) ||
-    !("curiosity" in globalForPrisma.prisma)
+    !("curiosity" in globalForPrisma.prisma) ||
+    !("learningAxiom" in globalForPrisma.prisma)
   ) {
     globalForPrisma.prisma = createPrismaClient();
   }

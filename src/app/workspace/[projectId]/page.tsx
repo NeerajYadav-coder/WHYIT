@@ -114,12 +114,16 @@ function WorkspacePage() {
   }
 
   // Convert DB messages (role: USER/ASSISTANT) → client Message type (role: user/assistant)
-  const initialMessages = data.conversation.messages.map((m) => ({
-    id: m.id,
-    role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
-    content: m.content,
-    createdAt: m.createdAt,
-  }));
+  const initialMessages = data.conversation.messages.map((m) => {
+    const meta = (m as { metadata?: { usesMemory?: boolean } }).metadata;
+    return {
+      id: m.id,
+      role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
+      content: m.content,
+      createdAt: m.createdAt,
+      usesMemory: Boolean(meta?.usesMemory),
+    };
+  });
 
   return (
     <ChatInterface

@@ -45,7 +45,7 @@ async function streamChatMessage(opts: {
   curiosities?: SideConversation[];
   signal: AbortSignal;
   onChunk: (chunk: string) => void;
-}): Promise<{ success: boolean; fullContent: string }> {
+}): Promise<{ success: boolean; fullContent: string; usesMemory?: boolean }> {
   const { message, conversationId, projectId, curiosities, signal, onChunk } = opts;
 
   // Format curiosities to pass only title, selectedText, and messages to backend
@@ -87,11 +87,11 @@ async function streamChatMessage(opts: {
       fullContent += chunk;
       onChunk(chunk);
     }
+    const usesMemory = res.headers.get("X-Whyit-Uses-Memory") === "1";
+    return { success: true, fullContent, usesMemory };
   } finally {
     reader.releaseLock();
   }
-
-  return { success: true, fullContent };
 }
 
 function ChatInterface({
@@ -233,7 +233,7 @@ function ChatInterface({
 
       const localCuriosities = loadCuriosities(projectId);
 
-      await streamChatMessage({
+      const streamResult = await streamChatMessage({
         message: trimmed,
         conversationId,
         projectId,
@@ -249,6 +249,14 @@ function ChatInterface({
           );
         },
       });
+
+      if (streamResult?.usesMemory) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, usesMemory: true } : m
+          )
+        );
+      }
     } catch (err) {
       const isAbort =
         err instanceof Error &&

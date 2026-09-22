@@ -121,6 +121,7 @@ export async function POST(req: NextRequest) {
       "Cache-Control": "no-cache, no-store",
       "X-Prompt-Tokens": preparedChat.metrics.estimatedPromptTokens.toString(),
       "X-Response-Tokens": preparedChat.metrics.estimatedResponseTokens.toString(),
+      ...(preparedChat.hasMemory ? { "X-Whyit-Uses-Memory": "1" } : {}),
     },
   });
 }

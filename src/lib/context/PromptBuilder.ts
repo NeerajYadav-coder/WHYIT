@@ -42,6 +42,23 @@ export class PromptBuilder {
       );
     }
 
+    // Established Axioms & Cognitive Memory
+    if (context.memory?.axioms && context.memory.axioms.length > 0) {
+      const memoryLines = [
+        `## Learner's Established Axioms & Mastered Concepts (Active Cognitive Memory)`,
+        `The learner has established/proven the following foundational truths in this project. When explaining new concepts or answering questions:`,
+        `- Build directly upon these axioms as foundational truths rather than re-explaining them from scratch.`,
+        `- If relevant, reference their established theorem/axiom explicitly.`,
+        `- Ensure all new explanations stay mathematically and conceptually harmonious with these axioms.`,
+      ];
+      for (const ax of context.memory.axioms) {
+        memoryLines.push(
+          `- [${ax.status}] ${ax.category}: "${ax.statement}"${ax.formula ? ` (Formula: $$${ax.formula}$$)` : ""}`
+        );
+      }
+      systemPromptLines.push(memoryLines.join("\n"));
+    }
+
     // Curiosities / Side Conversations memory
     if (context.curiosity?.threads && context.curiosity.threads.length > 0) {
       const curiosityLines = [

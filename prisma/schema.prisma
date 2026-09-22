@@ -49,6 +49,7 @@ model Project {
   conversations    Conversation[]
   knowledgeSources KnowledgeSource[]
   curiosities      Curiosity[]
+  axioms           LearningAxiom[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
@@ -200,3 +201,30 @@ model Curiosity {
   @@index([projectId])
   @@index([projectId, createdAt])
 }
+
+// ── Learning Axiom (Cognitive Memory & Mastered Concepts) ─────────
+// Foundational truths, principles, and mathematical theorems discovered
+// by the student or grounded by the AI. Feeds cognitive memory.
+enum AxiomStatus {
+  DISCOVERED
+  IN_PROGRESS
+  MASTERED
+}
+
+model LearningAxiom {
+  id          String      @id @default(cuid())
+  projectId   String
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  statement   String      @db.Text
+  formula     String?     @db.Text
+  category    String      @default("Core Principle")
+  status      AxiomStatus @default(DISCOVERED)
+  evidence    String?     @db.Text
+  pinned      Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([projectId])
+  @@index([projectId, status])
+}
+

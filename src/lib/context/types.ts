@@ -27,10 +27,17 @@ export interface ConversationContextInfo {
   messages: ConversationMessage[];
 }
 
-// Future placeholder types (strongly typed but empty for now)
+export interface AxiomMemoryItem {
+  id: string;
+  statement: string;
+  formula?: string | null;
+  category: string;
+  status: "DISCOVERED" | "IN_PROGRESS" | "MASTERED";
+  pinned: boolean;
+}
+
 export interface MemoryContextInfo {
-  // Reserved for Sprint 5 memory facts/associations
-  _brand?: "memory";
+  axioms: AxiomMemoryItem[];
 }
 
 export interface RegisteredKnowledgeSource {
